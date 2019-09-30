@@ -18,9 +18,10 @@ public class App {
             int msg1 = tweeter.tweet("alex", "second message");
             int msg2 = tweeter.tweet("bob", "bob's first message");
             int msg3 = tweeter.tweet("alex", "third message");
-            tweeter.follow("bob", "alex");
-            //tweeter.retweet("bob", msg);
+            //tweeter.follow("bob", "alex");
+            tweeter.retweet("bob", msg);
             tweeter.block("alex", "bob");
+            tweeter.retweet("bob", msg1);
         } catch (Exception e) {
             e.printStackTrace();
         }

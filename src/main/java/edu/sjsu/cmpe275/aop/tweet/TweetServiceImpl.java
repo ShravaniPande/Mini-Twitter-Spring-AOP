@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.aspectj.ajde.ui.internal.UserPreferencesStore;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TweetServiceImpl implements TweetService {
@@ -110,9 +111,66 @@ public class TweetServiceImpl implements TweetService {
 	public int retweet(String user, int messageId)
 			throws AccessControlException, IllegalArgumentException, IOException {
 		// TODO Auto-generated method stub
+		boolean isBlocked = false;
+		boolean isFollowing = false;
+		String owner = getMessageOwner(messageId);
+		System.out.println("owner of the msg: "+owner);
+		
+		//check if the user is blocked by the msg owner
+		ArrayList<String>blockedUsers = (ArrayList)blockList.get(owner);
+		//System.out.println("blocked users: "+blockedUsers);
+		if(blockedUsers != null) {
+			isBlocked = blockedUsers.contains(user);
+			System.out.println("Blocked: "+isBlocked);
+		}
+
+		//check if the user follows the message owner
+		ArrayList<String> followingUsers = (ArrayList)followers.get(owner);
+		System.out.println("Followers: "+followingUsers);
+		if(followingUsers != null) {
+			isFollowing = followingUsers.contains(user);
+			System.out.println("Is Following: "+isFollowing);
+		}
 
 		
+		//get the message content of the given messageID
+		String retweetedMsg = msgList.get(messageId);
+		System.out.println("Message being retweeted: "+retweetedMsg);
+		if(isFollowing && !isBlocked) {
+			int newMsgID = tweet(user, retweetedMsg);
+		}
+		else {
+			System.out.println("Cannot retweet");
+		}
+		
+		
 		return 0;
+	}
+	
+	private String getMessageOwner(int messageId) {
+		String uName = "";
+		boolean found = false;
+		
+		for (Map.Entry<String, HashMap<Integer,String>> um : userMessages.entrySet()) {
+			uName = um.getKey();
+			HashMap<Integer,String> mes = um.getValue();
+			System.out.println("User: "+uName);
+			System.out.println("messages: "+mes);
+			
+			for(Map.Entry<Integer,String> m : mes.entrySet()) {
+				int mID = m.getKey();
+				if(messageId == mID) {
+					found = true;
+					break;
+				}
+			}
+			if(found == true) {
+				break;
+			}
+			
+		}
+		return uName;
+		
 	}
 
 }
