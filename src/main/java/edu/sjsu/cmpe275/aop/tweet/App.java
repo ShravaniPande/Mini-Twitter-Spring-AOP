@@ -14,13 +14,21 @@ public class App {
         TweetStatsService stats = (TweetStatsService) ctx.getBean("tweetStatsService");
 
         try {
+
             int msg = tweeter.tweet("alex", "first tweet");
             int msg1 = tweeter.tweet("alex", "second message");
             int msg2 = tweeter.tweet("bob", "bob's first message");
             int msg3 = tweeter.tweet("alex", "third message");
-            tweeter.follow("bob", "alex");
-            tweeter.follow("cathy", "alex");
+        	int msg4 = tweeter.tweet("bob", "third message");
+            int msg5 = tweeter.tweet("bob", "third message");
+            int msg6 = tweeter.tweet("cathy", "third message");
+            tweeter.follow("cathy", "bob");
             tweeter.follow("alex", "bob");
+            tweeter.follow("bob", "alex");            
+            tweeter.follow("cathy", "alex");
+           
+            
+            //tweeter.follow("dorothy", "bob");
             tweeter.retweet("bob", msg);
             tweeter.block("alex", "bob");
             tweeter.retweet("bob", msg1);

@@ -51,7 +51,7 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 				mostFollowed = f.getKey();
 			}
 		}
-		System.out.println("*******************Most followed: "+mostFollowed);
+		//System.out.println("*******************Most followed: "+mostFollowed);
 		return mostFollowed;
 	}
 
@@ -63,8 +63,19 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 
 	@Override
 	public String getMostProductiveUser() {
-		// TODO Auto-generated method stub
-		return null;
+		int thisCount = 0;
+		int maxCount = 0;
+		String mostProductive = null;
+		for (Map.Entry<String, HashMap<Integer, String>> um : userMessages.entrySet()) {
+			thisCount = um.getValue().size();
+			System.out.println("thisCount: "+thisCount);
+			if(thisCount > maxCount) {
+				maxCount = thisCount;
+				mostProductive = um.getKey();
+				System.out.println("Most productive: "+mostProductive);
+			}
+		}
+		return mostProductive;
 	}
 
 	public void addNewTweetEntry(String user, String message, int messageId) {

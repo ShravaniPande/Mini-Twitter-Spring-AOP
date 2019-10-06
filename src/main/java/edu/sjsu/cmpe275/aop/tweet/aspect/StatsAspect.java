@@ -46,6 +46,7 @@ public class StatsAspect {
 		String followee = (String) args[1];
 		stats.addNewFollowEntry(follower, followee);
 		
+		
 	}
 	
 	
