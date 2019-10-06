@@ -18,8 +18,10 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 
 	@Override
 	public void resetStatsAndSystem() {
-		messageIdToMessageMap = new HashMap<Integer, String>();
-		userMessages = new HashMap<String, HashMap<Integer, String>>();
+		//messageIdToMessageMap = new HashMap<Integer, String>();
+		//userMessages = new HashMap<String, HashMap<Integer, String>>();
+		messageIdToMessageMap.clear();
+		userMessages.clear();
 
 	}
 

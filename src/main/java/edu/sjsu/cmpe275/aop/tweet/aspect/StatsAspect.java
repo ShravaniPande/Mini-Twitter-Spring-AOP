@@ -21,7 +21,7 @@ public class StatsAspect {
 	@Autowired TweetStatsServiceImpl stats;
 	
 	//@After("execution(public * edu.sjsu.cmpe275.aop.tweet.TweetService.*(..))")
-	@AfterReturning(pointcut = "execution(public * edu.sjsu.cmpe275.aop.tweet.TweetService.*tweet(..))", returning ="messageId")
+	@AfterReturning(pointcut = "execution(public * edu.sjsu.cmpe275.aop.tweet.TweetService.tweet(..))", returning ="messageId")
 	public void dummyAfterAdvice(JoinPoint joinPoint, Object messageId) {
 		System.out.printf("After the executuion of the metohd %s\n", joinPoint.getSignature().getName());
 		Object[] args = joinPoint.getArgs();
