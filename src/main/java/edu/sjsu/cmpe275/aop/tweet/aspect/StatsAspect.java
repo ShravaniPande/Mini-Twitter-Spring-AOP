@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
+import edu.sjsu.cmpe275.aop.tweet.TweetServiceImpl;
 import edu.sjsu.cmpe275.aop.tweet.TweetStatsServiceImpl;
 
 @Aspect
@@ -19,6 +20,7 @@ public class StatsAspect {
      */
 
 	@Autowired TweetStatsServiceImpl stats;
+	//@Autowired TweetServiceImpl service;
 	
 	//@After("execution(public * edu.sjsu.cmpe275.aop.tweet.TweetService.*(..))")
 	@AfterReturning(pointcut = "execution(public * edu.sjsu.cmpe275.aop.tweet.TweetService.tweet(..))", returning ="messageId")
@@ -35,5 +37,16 @@ public class StatsAspect {
 	public void dummyBeforeAdvice(JoinPoint joinPoint) {
 		System.out.printf("Before the executuion of the metohd %s\n", joinPoint.getSignature().getName());
 	}
+	
+	@After("execution(public * edu.sjsu.cmpe275.aop.tweet.TweetServiceImpl.follow(..))")
+	public void newFollowersList(JoinPoint joinPoint) {
+		System.out.printf("After the executuion of the metohd %s\n", joinPoint.getSignature().getName());
+		Object[] args = joinPoint.getArgs();
+		String follower = (String) args[0];
+		String followee = (String) args[1];
+		stats.addNewFollowEntry(follower, followee);
+		
+	}
+	
 	
 }

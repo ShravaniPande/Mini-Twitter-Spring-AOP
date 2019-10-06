@@ -1,6 +1,8 @@
 package edu.sjsu.cmpe275.aop.tweet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -10,11 +12,8 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 	 * implementation based on the requirements.
 	 */
 	private HashMap<Integer, String> messageIdToMessageMap = new HashMap<Integer, String>(); // Map<messageId, message>
-	private HashMap<String, HashMap<Integer, String>> userMessages = new HashMap<String, HashMap<Integer, String>>(); // Storing
-																														// Users
-																														// and
-																														// their
-																														// tweets
+	private HashMap<String, HashMap<Integer, String>> userMessages = new HashMap<String, HashMap<Integer, String>>(); // Storing Users and their tweets
+	private HashMap<String, ArrayList<String>> followers = new HashMap<String, ArrayList<String>>();
 
 	@Override
 	public void resetStatsAndSystem() {
@@ -40,8 +39,20 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 
 	@Override
 	public String getMostFollowedUser() {
-		// TODO Auto-generated method stub
-		return null;
+		int maxFollowers = 0;
+		int thisFollowers = 0;
+		String mostFollowed = null;
+		
+		for (Map.Entry<String, ArrayList<String>> f  : followers.entrySet()) {
+			ArrayList currentFollowers = f.getValue();
+			thisFollowers = currentFollowers.size();
+			if(thisFollowers > maxFollowers) {
+				maxFollowers  = thisFollowers;
+				mostFollowed = f.getKey();
+			}
+		}
+		System.out.println("*******************Most followed: "+mostFollowed);
+		return mostFollowed;
 	}
 
 	@Override
@@ -67,6 +78,27 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 			HashMap<Integer, String> m = new HashMap<Integer, String>();
 			m.put(messageId, message);
 			userMessages.put(user, m);
+		}
+	}
+	
+	public void addNewFollowEntry(String follower, String followee) {
+		if (followers.containsKey(followee)) {
+			ArrayList<String> followersList = followers.get(followee); // followers of that user
+			followersList.add(follower);
+			followers.put(followee, followersList); // update the list for that user
+			/*
+			 * if(followersList.contains(follower)) {
+			 * System.out.println("Already following"); }
+			 */
+			System.out.printf("User %s followed user %s \n", follower, followee);
+			System.out.println("Followers1: " + followers);
+		} else { // if the user has not been followed yet, i.e., this is his first follower
+			ArrayList<String> followersList = new ArrayList<String>();
+			followersList.add(follower);
+			followers.put(followee, followersList);
+			System.out.printf("User %s followed user %s \n", follower, followee);
+			System.out.println("Followers2: " + followers);
+
 		}
 	}
 }
