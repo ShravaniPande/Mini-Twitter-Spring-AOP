@@ -28,17 +28,18 @@ public class RetryAspect {
 	// edu.sjsu.cmpe275.aop.tweet.TweetService.tweet(..))", throwing =
 	// "ioException")
 	@Around("execution(public * edu.sjsu.cmpe275.aop.tweet.TweetService.*(..))")
-	public void aroundTtweetAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
-
+	public Object aroundTtweetAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
+		Object returnValue = null;
 		try {
 			// before business logic
-			joinPoint.proceed(); // Default execution of business logic
+			returnValue = joinPoint.proceed(); // Default execution of business logic
 			// after business logic
 		} catch (Throwable e) {
 			e.printStackTrace();
 			// tryFirstTime(joinPoint);
 			tryNTimes(joinPoint, 3, 1);
 		}
+		return returnValue;
 	}
 
 	private void tryNTimes(ProceedingJoinPoint joinPoint, int maxTriesCount, int currentTryCount) throws Throwable {
