@@ -40,7 +40,7 @@ public class RetryAspect {
 			tryNTimes(joinPoint, 3, 1);
 		}
 		return returnValue;
-	}
+	} 
 
 	private void tryNTimes(ProceedingJoinPoint joinPoint, int maxTriesCount, int currentTryCount) throws Throwable {
 		if (currentTryCount <= maxTriesCount) {
