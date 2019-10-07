@@ -64,16 +64,25 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 	@Override
 	public String getMostProductiveUser() {
 		int thisCount = 0;
-		int maxCount = 0;
+		int maxLength = 0;
 		String mostProductive = null;
+		int lengthOfMessage = 0;
 		for (Map.Entry<String, HashMap<Integer, String>> um : userMessages.entrySet()) {
-			thisCount = um.getValue().size();
-			System.out.println("thisCount: "+thisCount);
-			if(thisCount > maxCount) {
-				maxCount = thisCount;
-				mostProductive = um.getKey();
-				System.out.println("Most productive: "+mostProductive);
+			lengthOfMessage = 0;
+			HashMap<Integer, String>msg = um.getValue();
+			//System.out.println("user: "+um.getKey());
+			for(Map.Entry<Integer, String> len : msg.entrySet()) {
+				//System.out.println("message: "+len.getValue());
+				lengthOfMessage = lengthOfMessage + len.getValue().length();
+				//System.out.println("lengthOfMessage: "+lengthOfMessage);
 			}
+			if(lengthOfMessage > maxLength) {
+				maxLength = lengthOfMessage;
+				//System.out.println("maxLength: "+maxLength);
+				mostProductive = um.getKey();
+				//System.out.println("Most productive: "+mostProductive);
+			}
+			
 		}
 		return mostProductive;
 	}
@@ -96,7 +105,7 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 		if (followers.containsKey(followee)) {
 			ArrayList<String> followersList = followers.get(followee); // followers of that user
 			followersList.add(follower);
-			followers.put(followee, followersList); // update the list for that user
+			//followers.put(followee, followersList); // update the list for that user
 			/*
 			 * if(followersList.contains(follower)) {
 			 * System.out.println("Already following"); }
@@ -106,7 +115,7 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 		} else { // if the user has not been followed yet, i.e., this is his first follower
 			ArrayList<String> followersList = new ArrayList<String>();
 			followersList.add(follower);
-			followers.put(followee, followersList);
+			//followers.put(followee, followersList);
 			System.out.printf("User %s followed user %s \n", follower, followee);
 			System.out.println("Followers2: " + followers);
 
