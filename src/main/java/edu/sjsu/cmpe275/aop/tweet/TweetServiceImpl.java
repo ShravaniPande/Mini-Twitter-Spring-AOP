@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class TweetServiceImpl implements TweetService {
 
 	/***
@@ -18,8 +20,13 @@ public class TweetServiceImpl implements TweetService {
 	private HashMap<String, HashMap<Integer, String>> userMessages; // Storing Users and their tweets
 	private HashMap<String, ArrayList<String>> followers;
 	private HashMap<String, ArrayList<String>> blockList;
+	private HashMap<Integer, ArrayList<Integer>> msgRetweet;
 	int msgID;
 
+	
+	@Autowired TweetStatsServiceImpl stats;    //added this line coz not a part of submission - quick hack for retweet
+	
+	
 	public TweetServiceImpl() {
 		msgList = new ArrayList<String>();
 		messages = new HashMap<Integer, String>();
@@ -32,14 +39,15 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public int tweet(String user, String message) throws IllegalArgumentException, IOException {
-		if (message == null || message.length() > 140 || user == null || user.isEmpty()) {
-			throw new IllegalArgumentException();
-		} else {
+//		if (message == null || message.length() > 140 || user == null || user.isEmpty()) {
+//			throw new IllegalArgumentException();
+//		} else {
+			//assume entry is saved in DB and ID is generated
 			msgList.add(message); // this will create a simple list of messages
 			msgID = msgList.size(); // to get message ID
 			// System.out.println("No. of msgs: "+msgID);
 			messages.put(msgID, message); // creating a map of message ID and message
-			if (userMessages.containsKey(user)) { // to append the new message to the alread existing list if a user has
+			if (userMessages.containsKey(user)) { // to append the new message to the already existing list if a user has
 													// already tweeted before
 				HashMap<Integer, String> identifyUserMsgList = userMessages.get(user);
 				identifyUserMsgList.put(msgID, message);
@@ -53,30 +61,30 @@ public class TweetServiceImpl implements TweetService {
 			System.out.println("user message list: " + userMessages);
 			System.out.printf("User %s tweeted message: %s\n", user, message);
 			return msgID;
-		}
+		
 	}
 
 	@Override
 	public void follow(String follower, String followee) throws IOException {
-
-		if (followers.containsKey(followee)) {
-			ArrayList<String> followersList = followers.get(followee); // followers of that user
-			followersList.add(follower);
-			followers.put(followee, followersList); // update the list for that user
-			/*
-			 * if(followersList.contains(follower)) {
-			 * System.out.println("Already following"); }
-			 */
-			System.out.printf("User %s followed user %s \n", follower, followee);
-			System.out.println("Followers1: " + followers);
-		} else { // if the user has not been followed yet, i.e., this is his first follower
-			ArrayList<String> followersList = new ArrayList<String>();
-			followersList.add(follower);
-			followers.put(followee, followersList);
-			System.out.printf("User %s followed user %s \n", follower, followee);
-			System.out.println("Followers2: " + followers);
-
-		}
+		throw new IOException();
+//		if (followers.containsKey(followee)) {
+//			ArrayList<String> followersList = followers.get(followee); // followers of that user
+//			followersList.add(follower);
+//			followers.put(followee, followersList); // update the list for that user
+//			/*
+//			 * if(followersList.contains(follower)) {
+//			 * System.out.println("Already following"); }
+//			 */
+//			System.out.printf("User %s followed user %s \n", follower, followee);
+//			System.out.println("Followers1: " + followers);
+//		} else { // if the user has not been followed yet, i.e., this is his first follower
+//			ArrayList<String> followersList = new ArrayList<String>();
+//			followersList.add(follower);
+//			followers.put(followee, followersList);
+//			System.out.printf("User %s followed user %s \n", follower, followee);
+//			System.out.println("Followers2: " + followers);
+//
+//		}
 
 	}
 
@@ -106,39 +114,7 @@ public class TweetServiceImpl implements TweetService {
 	public int retweet(String user, int messageId)
 			throws AccessControlException, IllegalArgumentException, IOException {
 		// TODO Auto-generated method stub
-		boolean isBlocked = false;
-		boolean isFollowing = false;
-		int newMessageId = 0;
-		String owner = getMessageOwner(messageId);
-		System.out.println("owner of the msg: " + owner);
-
-		// check if the user is blocked by the msg owner
-		ArrayList<String> blockedUsers = (ArrayList) blockList.get(owner);
-		// System.out.println("blocked users: "+blockedUsers);
-		if (blockedUsers != null) {
-			isBlocked = blockedUsers.contains(user);
-			System.out.println("Blocked: " + isBlocked);
-		}
-
-		// check if the user follows the message owner
-		ArrayList<String> followingUsers = (ArrayList) followers.get(owner);
-		System.out.println("Followers: " + followingUsers);
-		if (followingUsers != null) {
-			isFollowing = followingUsers.contains(user);
-			System.out.println("Is Following: " + isFollowing);
-		}
-
-		// get the message content of the given messageID
-		String retweetedMsg = msgList.get(messageId);
-		System.out.println("Message being retweeted: " + retweetedMsg);
-		if (isFollowing && !isBlocked) {
-			newMessageId = tweet(user, retweetedMsg);
-		} else {
-			throw new AccessControlException("cannot retweet");
-			// System.out.println("Cannot retweet");
-		}
-
-		return newMessageId;
+		return tweet(user, stats.getMessageById(messageId));
 	}
 
 	private String getMessageOwner(int messageId) {

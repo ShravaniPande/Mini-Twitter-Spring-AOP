@@ -14,7 +14,21 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 	private HashMap<Integer, String> messageIdToMessageMap = new HashMap<Integer, String>(); // Map<messageId, message>
 	private HashMap<String, HashMap<Integer, String>> userMessages = new HashMap<String, HashMap<Integer, String>>(); // Storing Users and their tweets
 	private HashMap<String, ArrayList<String>> followers = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, ArrayList<String>> blockList = new HashMap<String, ArrayList<String>>();
+	private HashMap<Integer, ArrayList<Integer>> msgRetweet = new HashMap<Integer, ArrayList<Integer>>();
+	private ArrayList<String> msgList = new ArrayList<String>(); // for list of all the tweets
 
+	public HashMap<String, ArrayList<String>> getBlockList() {
+		return blockList;
+	}
+	public HashMap<String, ArrayList<String>> getFollowers() {
+		return followers;
+	}
+	
+	public boolean messageExists(int messageId) {
+		boolean exists = messageIdToMessageMap.containsKey(messageId);
+		return exists;
+	}
 	@Override
 	public void resetStatsAndSystem() {
 		//messageIdToMessageMap = new HashMap<Integer, String>();
@@ -24,6 +38,7 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 
 	}
 
+	
 	@Override
 	public int getLengthOfLongestTweet() {
 		Set<Entry<Integer, String>> entrySet = messageIdToMessageMap.entrySet();
@@ -45,19 +60,24 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 		
 		for (Map.Entry<String, ArrayList<String>> f  : followers.entrySet()) {
 			ArrayList currentFollowers = f.getValue();
+			System.out.println("current followers: "+currentFollowers + "of: "+f.getKey());
 			thisFollowers = currentFollowers.size();
 			if(thisFollowers > maxFollowers) {
 				maxFollowers  = thisFollowers;
 				mostFollowed = f.getKey();
 			}
 		}
-		//System.out.println("*******************Most followed: "+mostFollowed);
+		System.out.println("*******************Most followed: "+mostFollowed);
 		return mostFollowed;
 	}
+	/*****************************************************************************/
 
 	@Override
 	public String getMostPopularMessage() {
-		// TODO Auto-generated method stub
+		/*for (Map.Entry<K, V> msg : messageIdToMessageMap) {	//iterate through each message
+			
+			
+		}*/
 		return null;
 	}
 
@@ -105,7 +125,7 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 		if (followers.containsKey(followee)) {
 			ArrayList<String> followersList = followers.get(followee); // followers of that user
 			followersList.add(follower);
-			//followers.put(followee, followersList); // update the list for that user
+			followers.put(followee, followersList); // update the list for that user
 			/*
 			 * if(followersList.contains(follower)) {
 			 * System.out.println("Already following"); }
@@ -115,10 +135,61 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 		} else { // if the user has not been followed yet, i.e., this is his first follower
 			ArrayList<String> followersList = new ArrayList<String>();
 			followersList.add(follower);
-			//followers.put(followee, followersList);
+			followers.put(followee, followersList);
 			System.out.printf("User %s followed user %s \n", follower, followee);
 			System.out.println("Followers2: " + followers);
 
 		}
+	}
+	
+	public void addNewBlockEntry(String follower, String blocker) {
+		if (blockList.containsKey(blocker)) {
+			ArrayList<String> block = blockList.get(blocker); // followers of that user
+			block.add(follower);
+			blockList.put(blocker, block); // update the list for that user
+			/*
+			 * if(followersList.contains(follower)) {
+			 * System.out.println("Already following"); }
+			 */
+			System.out.printf("User %s followed user %s \n", follower, blocker);
+			System.out.println("Followers1: " + blockList);
+		} else { // if the user has not been followed yet, i.e., this is his first follower
+			ArrayList<String> block = new ArrayList<String>();
+			block.add(follower);
+			blockList.put(blocker, block);
+			System.out.printf("User %s followed user %s \n", follower, blocker);
+			System.out.println("Followers2: " + blockList);
+
+		}
+	}
+	
+	public String getMessageOwner(int messageId) {
+		String uName = "";
+		boolean found = false;
+
+		for (Map.Entry<String, HashMap<Integer, String>> um : userMessages.entrySet()) {
+			uName = um.getKey();
+			HashMap<Integer, String> mes = um.getValue();
+			System.out.println("User: " + uName);
+			System.out.println("messages: " + mes);
+
+			for (Map.Entry<Integer, String> m : mes.entrySet()) {
+				int mID = m.getKey();
+				if (messageId == mID) {
+					found = true;
+					break;
+				}
+			}
+			if (found == true) {
+				break;
+			}
+
+		}
+		return uName;
+
+	}
+	
+	public String getMessageById(int msgId) {
+		return messageIdToMessageMap.get(msgId);
 	}
 }

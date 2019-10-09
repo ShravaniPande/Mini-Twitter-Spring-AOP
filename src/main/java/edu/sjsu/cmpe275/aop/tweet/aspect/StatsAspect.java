@@ -1,8 +1,12 @@
 package edu.sjsu.cmpe275.aop.tweet.aspect;
 
+import java.io.IOException;
+
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +16,7 @@ import edu.sjsu.cmpe275.aop.tweet.TweetServiceImpl;
 import edu.sjsu.cmpe275.aop.tweet.TweetStatsServiceImpl;
 
 @Aspect
-@Order(0)
+@Order(2)
 public class StatsAspect {
     /***
      * Following is a dummy implementation of this aspect.
@@ -33,12 +37,20 @@ public class StatsAspect {
 		
 	}
 	
-	@Before("execution(public void edu.sjsu.cmpe275.aop.tweet.TweetService.follow(..))")
-	public void dummyBeforeAdvice(JoinPoint joinPoint) {
-		System.out.printf("Before the executuion of the metohd %s\n", joinPoint.getSignature().getName());
-	}
+
 	
-	@After("execution(public * edu.sjsu.cmpe275.aop.tweet.TweetServiceImpl.follow(..))")
+	@After("execution(public * edu.sjsu.cmpe275.aop.tweet.TweetServiceImpl.block(..))")
+	public void newBlockList(JoinPoint joinPoint) {
+		System.out.printf("After the executuion of the metohd %s\n", joinPoint.getSignature().getName());
+		Object[] args = joinPoint.getArgs();
+		String follower = (String) args[1];
+		String blocker = (String) args[0];
+		stats.addNewBlockEntry(follower, blocker);
+		
+		
+	}
+
+	@After("execution(public * edu.sjsu.cmpe275.aop.tweet.TweetService.follow(..))")
 	public void newFollowersList(JoinPoint joinPoint) {
 		System.out.printf("After the executuion of the metohd %s\n", joinPoint.getSignature().getName());
 		Object[] args = joinPoint.getArgs();
