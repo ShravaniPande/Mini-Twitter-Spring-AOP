@@ -66,12 +66,12 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public void follow(String follower, String followee) throws IOException {
 
-		throw new IOException(); // this line is added to test retry aspect.
+		//throw new IOException(); // this line is added to test retry aspect.
 	}
 
 	@Override
 	public void block(String user, String follower) throws IllegalArgumentException, IOException {
-		throw new IOException(); // this line is added to test retry aspect.
+		//throw new IOException(); // this line is added to test retry aspect.
 	}
 
 	@Override
