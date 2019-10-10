@@ -1,98 +1,150 @@
 package edu.sjsu.cmpe275.aop.tweet;
 
 import java.io.IOException;
-import java.security.AccessControlException;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class App {
-	
+
 	public TweetService tweeter;
 	public TweetStatsService stats;
-	
-    public static void main(String[] args) {
-        /***
-         * Following is a dummy implementation of App to demonstrate bean creation with Application context.
-         * You may make changes to suit your need, but this file is NOT part of the submission.
-         */
-    	 ClassPathXmlApplicationContext ctx;
-    	 ctx = new ClassPathXmlApplicationContext("context.xml");
-    	 App app = new App();
-    	 app.setStats((TweetStatsService) ctx.getBean("tweetStatsService"));
-    	 app.setTweeter((TweetService) ctx.getBean("tweetService"));
-    	 
-         /*tweeter = (TweetService) ctx.getBean("tweetService");
-         stats = (TweetStatsService) ctx.getBean("tweetStatsService");*/
-    	 
-        try {
-        	//app.testOne();
-        	//app.testTwo();
-        	//app.retweetTest();
-        	app.followTest();
-        	
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	public static void main(String[] args) {
+		/***
+		 * Following is a dummy implementation of App to demonstrate bean creation with
+		 * Application context. You may make changes to suit your need, but this file is
+		 * NOT part of the submission.
+		 */
+		ClassPathXmlApplicationContext ctx;
+		ctx = new ClassPathXmlApplicationContext("context.xml");
+		App app = new App();
+		app.setStats((TweetStatsService) ctx.getBean("tweetStatsService"));
+		app.setTweeter((TweetService) ctx.getBean("tweetService"));
 
-        
-        ctx.close();
-    }
-    public TweetStatsService getStats() {
+		//app.test_1_block_nullvalues_throwsIllegalArgumentException();
+		// app.test_2_test_tweetMethod();
+		// app.test_3_tweet();
+		// app.test_4_retweetTest();
+		// app.test_5_followTest();
+		//app.test_6_block_IOException_retires();
+		app.test_7_sortedMapTest();
+		
+		ctx.close();
+	}
+	public void test_7_sortedMapTest() {
+		SortedMap<String, Integer> sortedMap = new TreeMap<String, Integer>();
+		sortedMap.put("zz", 1);
+		sortedMap.put("dd", 4);
+		sortedMap.put("aa", 4);
+		System.out.println(sortedMap);
+		
+	}
+	public void test_6_block_IOException_retires() {
+		try {
+			tweeter.block("bob","alex");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void test_1_block_nullvalues_throwsIllegalArgumentException() {
+		try {
+			tweeter.block(null, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void test_2_test_tweetMethod() {
+		try {
+			tweeter.tweet("alex", "first tweet");
+
+		} catch (IllegalArgumentException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void test_3_tweet() {
+		try {
+			tweeter.tweet(null, null);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		printStatusAsLog();
+	}
+
+	public void test_4_retweetTest() {
+		int msgId;
+		try {
+			msgId = tweeter.tweet("alex", "first tweet");
+			tweeter.follow("bob", "alex");
+			tweeter.block("alex", "bob");
+			tweeter.retweet("bob", msgId);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void test_5_followTest() {
+		try {
+			tweeter.follow("bob", "alex");
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void testOne() throws IllegalArgumentException, IOException {
+		int msg = tweeter.tweet("alex", "first tweet");
+		int msg1 = tweeter.tweet("alex", "second message");
+		tweeter.tweet("bob", "bob's first message");
+		tweeter.tweet("alex", "third message");
+		tweeter.tweet("bob", "third message");
+		tweeter.tweet("bob", "third message");
+		tweeter.tweet("cathy", "third message");
+		tweeter.follow("cathy", "bob");
+		tweeter.follow("alex", "bob");
+		tweeter.follow("bob", "alex");
+		tweeter.follow("cathy", "alex");
+
+		// tweeter.follow("dorothy", "bob");
+		tweeter.retweet("bob", msg);
+		// tweeter.block("alex", "bob");
+		tweeter.retweet("bob", msg1);
+		printStatusAsLog();
+	}
+
+	public void printStatusAsLog() {
+		System.out.println("Most productive user: " + stats.getMostProductiveUser());
+		System.out.println("Most popular user: " + stats.getMostFollowedUser());
+		System.out.println("Length of the longest tweet: " + stats.getLengthOfLongestTweet());
+		System.out.println("Most popular message: " + stats.getMostPopularMessage());
+	}
+
+	public TweetStatsService getStats() {
 		return stats;
 	}
-    public TweetService getTweeter() {
+
+	public TweetService getTweeter() {
 		return tweeter;
 	}
-    public void setStats(TweetStatsService stats) {
+
+	public void setStats(TweetStatsService stats) {
 		this.stats = stats;
 	}
-    public void setTweeter(TweetService tweeter) {
+
+	public void setTweeter(TweetService tweeter) {
 		this.tweeter = tweeter;
 	}
-    
-    public void printStatusAsLog() {
-    	System.out.println("Most productive user: " + stats.getMostProductiveUser());
-        System.out.println("Most popular user: " + stats.getMostFollowedUser());
-        System.out.println("Length of the longest tweet: " + stats.getLengthOfLongestTweet());
-        System.out.println("Most popular message: " + stats.getMostPopularMessage());
-    }
-    
-    public void testTwo() throws IllegalArgumentException, IOException {
-    	int msg = tweeter.tweet(null, null);
-    	printStatusAsLog();
-    	
-    }
-    public void retweetTest() throws IllegalArgumentException, IOException, AccessControlException {
-        int msgId = tweeter.tweet("alex", "first tweet");
-        tweeter.follow("bob", "alex"); 
-        tweeter.block("alex", "bob");
-        tweeter.retweet("bob", msgId);
-    	
-    }
-    
-    public void followTest() throws IllegalArgumentException, IOException {
-    	tweeter.follow("bob", "alex");
-    }
-    public void testOne() throws IllegalArgumentException, IOException {
-        int msg = tweeter.tweet("alex", "first tweet");
-        int msg1 = tweeter.tweet("alex", "second message");
-        int msg2 = tweeter.tweet("bob", "bob's first message");
-        int msg3 = tweeter.tweet("alex", "third message");
-    	int msg4 = tweeter.tweet("bob", "third message");
-        int msg5 = tweeter.tweet("bob", "third message");
-        int msg6 = tweeter.tweet("cathy", "third message");
-        tweeter.follow("cathy", "bob");
-        tweeter.follow("alex", "bob");
-        tweeter.follow("bob", "alex");            
-        tweeter.follow("cathy", "alex");
-       
-        
-        //tweeter.follow("dorothy", "bob");
-        tweeter.retweet("bob", msg);
-        //tweeter.block("alex", "bob");
-        tweeter.retweet("bob", msg1);
-        
-        printStatusAsLog();
-    }
 }

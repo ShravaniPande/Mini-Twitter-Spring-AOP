@@ -4,7 +4,7 @@ public interface TweetStatsService {
 	// Please do NOT change this file.
 
 	/**
-	 * Reset all the four measurements. For purpose of this lab, it also resets the
+	 * Reset all the four measurements. c
 	 * following and blocking records as if the system is starting fresh for any
 	 * purpose related to the metrics below.
 	 */

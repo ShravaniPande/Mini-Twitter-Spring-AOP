@@ -18,17 +18,9 @@ public class RetryAspect {
 	 * @throws Throwable
 	 */
 
-	/*-
-	@Autowired
-	private TweetService tweetService;
-*/
-	// @Around("execution(public int
-	// edu.sjsu.cmpe275.aop.tweet.TweetService.*tweet(..))")
-	// @AfterThrowing(pointcut = "execution(public int
-	// edu.sjsu.cmpe275.aop.tweet.TweetService.tweet(..))", throwing =
-	// "ioException")
 	@Around("execution(public * edu.sjsu.cmpe275.aop.tweet.TweetService.*(..))")
-	public Object aroundTtweetAdvice(ProceedingJoinPoint joinPoint) throws Throwable{
+	public Object aroundTtweetAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
+		System.out.println("***TryAspect@Around:  before " + joinPoint.getSignature().getName());
 		Object returnValue = null;
 		try {
 			// before business logic
@@ -36,14 +28,15 @@ public class RetryAspect {
 			// after business logic
 		} catch (IOException e) {
 			e.printStackTrace();
-			// tryFirstTime(joinPoint);
 			tryNTimes(joinPoint, 3, 1);
 		}
+		System.out.println("***TryAspect@Around:  after" + joinPoint.getSignature().getName());
 		return returnValue;
-	} 
+	}
 
 	private void tryNTimes(ProceedingJoinPoint joinPoint, int maxTriesCount, int currentTryCount) throws Throwable {
-		System.out.println("Trying execution of :"+joinPoint.getSignature().getName()+" max count = "+maxTriesCount+ " currentTryCount = "+currentTryCount);
+		System.out.println("Trying execution of :" + joinPoint.getSignature().getName() + " max count = "
+				+ maxTriesCount + " currentTryCount = " + currentTryCount);
 		if (currentTryCount <= maxTriesCount) {
 			try {
 				joinPoint.proceed();
@@ -57,55 +50,4 @@ public class RetryAspect {
 			}
 		}
 	}
-
-	/*-
-		private void tryFirstTime(ProceedingJoinPoint joinPoint) throws Throwable {
-			try {
-				joinPoint.proceed(); // trying for 1st time
-			} catch (Throwable e) {
-				try {
-					joinPoint.proceed(); // trying for 2nd time
-				} catch (Throwable e1) {
-					joinPoint.proceed(); // trying for 3rd time and if still error re-throw same error
-	
-				}
-			}
-		}
-	*/
-	// @Around("execution(public int
-	// edu.sjsu.cmpe275.aop.tweet.TweetService.*tweet(..))")
-	/*-
-	public int dummyAdviceOne(ProceedingJoinPoint joinPoint) throws Throwable {
-		System.out.printf("Prior to the executuion of the metohd %s\n", joinPoint.getSignature().getName());
-		Integer result = null;
-		try {
-			result = (Integer) joinPoint.proceed();
-			System.out.printf("Finished the executuion of the metohd %s with result %s\n",
-					joinPoint.getSignature().getName(), result);
-		} catch (Throwable e) {
-			e.printStackTrace();
-			System.out.printf("Aborted the executuion of the metohd %s\n", joinPoint.getSignature().getName());
-			throw e;
-		}
-		return result.intValue();
-	}
-	/*-
-	System.out.println("io Exception occured in "+ joinPoint.getSignature().getName());
-	System.err.println("exception details " + ioException.getMessage());
-	
-	System.out.println("*********retrying ************* Count: 1");
-	Object[] args = joinPoint.getArgs();
-	String user = (String) args[0];
-	String tweetMessage = (String) args[1];
-	try {
-		tweetService.tweet(user, tweetMessage);
-	} catch (IllegalArgumentException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		throw e;
-	}
-	*/
 }

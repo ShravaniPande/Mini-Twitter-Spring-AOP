@@ -2,6 +2,7 @@ package edu.sjsu.cmpe275.aop.tweet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -15,8 +16,8 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 	private HashMap<String, HashMap<Integer, String>> userMessages = new HashMap<String, HashMap<Integer, String>>(); // Storing Users and their tweets
 	private HashMap<String, ArrayList<String>> followers = new HashMap<String, ArrayList<String>>();
 	private HashMap<String, ArrayList<String>> blockList = new HashMap<String, ArrayList<String>>();
-	private HashMap<Integer, ArrayList<Integer>> msgRetweet = new HashMap<Integer, ArrayList<Integer>>();
-	private ArrayList<String> msgList = new ArrayList<String>(); // for list of all the tweets
+	
+
 
 	public HashMap<String, ArrayList<String>> getBlockList() {
 		return blockList;
@@ -33,9 +34,10 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 	public void resetStatsAndSystem() {
 		//messageIdToMessageMap = new HashMap<Integer, String>();
 		//userMessages = new HashMap<String, HashMap<Integer, String>>();
-		messageIdToMessageMap.clear();
-		userMessages.clear();
-
+		//messageIdToMessageMap.clear();
+		//userMessages.clear();
+		followers.clear();
+		blockList.clear();
 	}
 
 	
@@ -59,7 +61,7 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 		String mostFollowed = null;
 		
 		for (Map.Entry<String, ArrayList<String>> f  : followers.entrySet()) {
-			ArrayList currentFollowers = f.getValue();
+			List<String> currentFollowers = f.getValue();
 			System.out.println("current followers: "+currentFollowers + "of: "+f.getKey());
 			thisFollowers = currentFollowers.size();
 			if(thisFollowers > maxFollowers) {
@@ -83,7 +85,6 @@ public class TweetStatsServiceImpl implements TweetStatsService {
 
 	@Override
 	public String getMostProductiveUser() {
-		int thisCount = 0;
 		int maxLength = 0;
 		String mostProductive = null;
 		int lengthOfMessage = 0;
